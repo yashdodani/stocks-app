@@ -5,30 +5,28 @@ import Stock from './Stock';
 
 const base_url = 'http://localhost:8001';
 
+// initialize socket.io
 const socket = io(base_url);
 
 function App() {
     const [number, setNumber] = useState('');
     const [stocks, setStocks] = useState([]);
 
-    // console.log(stocks.length);
-
     const getStocks = async (event) => {
         event.preventDefault();
+
         if (number > 5 || number < 1) {
             alert('Please enter a number between 1 and 5');
             setNumber('');
             return;
         }
+
+        // fetch data
         const response = await axios.get(`${base_url}/api/stocks/${number}`);
 
+        // set stocks if file changes
         socket.on('filechange', (response) => {
             setStocks(response.data);
-            <div className="text-center">
-                <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>;
         });
 
         setStocks(response.data);
@@ -56,8 +54,6 @@ function App() {
                     Show
                 </button>
             </form>
-
-            {}
 
             <br />
             <button className="btn btn-dark" onClick={handleRestart}>

@@ -1,0 +1,17 @@
+{
+    "name": "stocks-app",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start:client": "cd ./packages/client && npm run dev",
+        "start:server": "cd ./packages/server && npm run dev"
+    },
+    "workspaces": [
+        "./packages/client",
+        "./packages/server"
+    ],
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": ""
+}

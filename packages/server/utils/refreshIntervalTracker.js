@@ -1,10 +1,9 @@
 const fs = require('fs');
-let origListOfStocksObj = require('./tickers');
 
 let stocksData;
 
 const updateStockData = () => {
-    console.log('checking');
+    console.log('Refreshing...');
     stocksData = [];
 
     const tempData = fs.readFileSync(
@@ -21,6 +20,7 @@ const updateStockData = () => {
 
     const tempStocksData = stocksData;
 
+    // nested loop, to check if stock should be updated, if yes find it and update it.
     tempStocksData.forEach((iterateStockObj) => {
         if (shouldUpdate(iterateStockObj)) {
             stocksData = stocksData.map((stock) => {
@@ -41,15 +41,13 @@ const updateStockData = () => {
                 `${__dirname}/../data/stocks.json`,
                 JSON.stringify(stocksData)
             );
-
-            console.log(`data updated for ${iterateStockObj.ticker}`);
         }
     });
 };
 
+// check if time more than refreshInterval has passed.
 const shouldUpdate = (stock) => {
     const interval = Date.now() - stock.lastUpdatedAt;
-    console.log(`interval for ${stock.ticker}`, interval);
     return interval >= stock.refreshInterval;
 };
 

@@ -17,6 +17,8 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
+
+    // check for file changes 'stocks.json'
     fs.watchFile(
         `${__dirname}/data/stocks.json`,
         {
@@ -24,7 +26,6 @@ io.on('connection', (socket) => {
             interval: 1000,
         },
         (data) => {
-            console.log('file changed log');
             stocksData = [];
 
             const tempData = fs.readFileSync(
@@ -38,6 +39,12 @@ io.on('connection', (socket) => {
         }
     );
 
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+        fs.writeFileSync(`${__dirname}/data/stocks.json`, '');
+    });
+
+    // deletes data in 'stocks.json' to start again
     socket.on('restart', () => {
         stocksData = '';
         fs.writeFileSync(`${__dirname}/data/stocks.json`, stocksData);
