@@ -1,41 +1,30 @@
 const fs = require('fs');
 const axios = require('axios');
 const router = require('express').Router();
+const listOfTickers = require('../utils/tickers');
 
 // const dbPath = '../data/stocks.json';
-
-const listOfTickers = [
-    'MSFT',
-    'AAPL',
-    'NVDA',
-    'GOOG',
-    'AMZN',
-    'META',
-    'JPM',
-    'WMT',
-    'TSLA',
-    'BRK/A',
-    'BRK/B',
-    'TSM',
-    'LLY',
-    'AVGO',
-    'NVO',
-    'V',
-    'MA',
-    'JNJ',
-    'ORCL',
-    'HD',
-];
-
 // const stocksData = JSON.parse(
 //     fs.readFileSync(`${__dirname}/../data/stocks.json`)
 // );
+
+const generateId = () => Math.floor(Math.random() * 10000);
+
+const randomRefreshInterval = () => Math.floor(Math.random() * 5 + 1);
 
 const fetchData = async (ticker) => {
     try {
         const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/2023-01-09/2023-01-09?apiKey=ywfYJ3C_S23CpIHnl6XbM6z551QsPSqF`;
         const response = await axios.get(url);
-        return response.data;
+
+        const returnedData = {
+            ticker: response.data.ticker,
+            prices: response.data.results[0],
+            id: generateId(),
+            refreshInterval: randomRefreshInterval(),
+        };
+        console.log(returnedData);
+        return returnedData;
     } catch (err) {
         console.log(err.message);
     }
@@ -62,11 +51,10 @@ router.get('/', (req, res) => {
 
 router.get('/stocks/:n', async (req, res) => {
     const numberOfTickers = Number(req.params.n);
-    console.log(numberOfTickers);
     const tickers = listOfTickers.slice(0, numberOfTickers);
     console.log(tickers);
     try {
-        const promiseArray = tickers.map((ticker) => fetchData(ticker));
+        const promiseArray = tickers.map((item) => fetchData(item.ticker));
         const fullData = await Promise.all(promiseArray);
         fs.writeFileSync(
             `${__dirname}/../data/stocks.json`,

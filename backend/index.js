@@ -1,6 +1,9 @@
 const app = require('./app');
+const { updateStockData } = require('./utils/refreshIntervalTracker');
 
-const PORT = 3000;
+setInterval(updateStockData, 1000);
+
+const PORT = 8001;
 app.listen(PORT, () => {
     console.log(`App running on port ${PORT}`);
 });
