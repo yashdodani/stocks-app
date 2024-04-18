@@ -1,17 +1,26 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
+import Stock from './Stock';
 
-const base_url = '/api/stocks';
+const base_url = 'http://localhost:8001/api/stocks';
+
+const socket = io('http://localhost:8001');
 
 function App() {
     const [number, setNumber] = useState('');
     const [stocks, setStocks] = useState([]);
 
-    console.log(stocks.length);
+    socket.on('filechange', (response) => {
+        setStocks(response.data);
+    });
+
+    // console.log(stocks.length);
 
     const getStocks = async (event) => {
         event.preventDefault();
-        const response = await axios.get(`${base_url}/${number}`);
+        const dataObj = { numberOfTickers: number };
+        const response = await axios.post(base_url, dataObj);
         console.log(response);
         setStocks(response.data);
     };
@@ -33,7 +42,7 @@ function App() {
             <div>
                 <ul>
                     {stocks.map((stock) => (
-                        <li key={stock.request_id}>{stock.ticker}</li>
+                        <Stock key={stock.id} stock={stock} />
                     ))}
                 </ul>
             </div>

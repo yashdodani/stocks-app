@@ -25,7 +25,7 @@ const updateStockData = () => {
                 `${__dirname}/../data/stocks.json`,
                 JSON.stringify(stocksData)
             );
-            console.log('data updated');
+            // console.log('data updated');
         } else {
             console.log('not updated');
         }
