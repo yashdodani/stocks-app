@@ -1,5 +1,5 @@
 const fs = require('fs');
-let origListOfStocks = require('./tickers');
+let origListOfStocksObj = require('./tickers');
 
 let stocksData;
 
@@ -15,53 +15,42 @@ const updateStockData = () => {
         stocksData = JSON.parse(tempData);
     }
 
-    let listOfStocks = origListOfStocks;
+    if (stocksData.length === 0) {
+        return;
+    }
 
-    listOfStocks = listOfStocks.slice(0, stocksData.length);
+    const tempStocksData = stocksData;
 
-    listOfStocks.forEach((stock) => {
-        if (shouldUpdate(stock)) {
-            const change = Math.floor(Math.random() * 5);
+    tempStocksData.forEach((iterateStockObj) => {
+        if (shouldUpdate(iterateStockObj)) {
+            stocksData = stocksData.map((stock) => {
+                const change = Math.floor(Math.random() * 3 + 1);
 
-            stocksData = stocksData.map((element) => {
-                // console.log('initial stock', element);
-                if (element.ticker === stock.ticker) {
-                    if (Math.random() < 0.5) {
-                        element.prices.o += change;
-                    } else {
-                        element.prices.o -= change;
-                    }
+                if (stock.ticker === iterateStockObj.ticker) {
+                    Math.random() < 0.5
+                        ? (stock.prices.o += change)
+                        : (stock.prices.o -= change);
+
+                    stock.lastUpdatedAt = Date.now();
                 }
-                return element;
+
+                return stock;
             });
 
             fs.writeFileSync(
                 `${__dirname}/../data/stocks.json`,
                 JSON.stringify(stocksData)
             );
-            console.log('data updated');
-        } else {
-            console.log('not updated');
+
+            console.log(`data updated for ${iterateStockObj.ticker}`);
         }
     });
 };
 
 const shouldUpdate = (stock) => {
-    const currentTime = Number(Date.now());
-    const lastUpdatedTime = getLastUpdatedTime(stock);
-    const refreshInterval = stock.refreshInterval;
-    const interval = currentTime - lastUpdatedTime;
-    // console.log('interval', interval);
-    return interval >= refreshInterval;
+    const interval = Date.now() - stock.lastUpdatedAt;
+    console.log(`interval for ${stock.ticker}`, interval);
+    return interval >= stock.refreshInterval;
 };
-
-const getLastUpdatedTime = (stock) =>
-    Number(Date.now()) - stock.refreshInterval;
-
-// const hello = () => {
-//     console.log('hello');
-// };
-
-// setInterval(hello, 1000);
 
 module.exports = { updateStockData };

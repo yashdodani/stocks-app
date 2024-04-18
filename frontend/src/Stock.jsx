@@ -1,11 +1,19 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
+
 const Stock = ({ stock }) => {
     return (
         <div>
-            <h4>{stock.ticker}</h4>
+            <strong>{stock.ticker}</strong>
             <p>{stock.prices.o}</p>
+            <p>{stock.refreshInterval}</p>
         </div>
     );
 };
+
+Stock.propTypes = {
+    stock: PropTypes.object.isRequired,
+};
+
+Stock.displayName = 'Stock';
 
 export default Stock;
