@@ -38,11 +38,14 @@ router.get('/:n', async (req, res) => {
     try {
         // fetch data on the basis of 'symbols' or 'tickers' in the list.
         const promiseArray = tickers.map((item) => fetchData(item.ticker));
-        const fullData = await Promise.all(promiseArray);
+        let fullData = await Promise.all(promiseArray);
+
+        // filter null values
+        const savingData = fullData.filter((data) => data !== undefined);
 
         fs.writeFileSync(
             `${__dirname}/../data/stocks.json`,
-            JSON.stringify(fullData)
+            JSON.stringify(savingData)
         );
 
         res.status(200).send(fullData);

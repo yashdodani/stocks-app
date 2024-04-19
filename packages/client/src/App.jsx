@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import Stock from './Stock';
@@ -11,6 +11,15 @@ const socket = io(base_url);
 function App() {
     const [number, setNumber] = useState('');
     const [stocks, setStocks] = useState([]);
+    const [numberOfCalls, setNumberOfCalls] = useState(0);
+
+    useEffect(() => {
+        const numberOfCallsTrue = window.localStorage.getItem('numberOfCalls');
+
+        numberOfCallsTrue === null
+            ? setNumberOfCalls(0)
+            : setNumberOfCalls(Number(numberOfCallsTrue));
+    }, []);
 
     const getStocks = async (event) => {
         event.preventDefault();
@@ -20,6 +29,22 @@ function App() {
             setNumber('');
             return;
         }
+
+        window.localStorage.setItem(
+            'numberOfCalls',
+            numberOfCalls + Number(number)
+        );
+        setNumberOfCalls(numberOfCalls + Number(number));
+
+        if (Number(window.localStorage.getItem('numberOfCalls')) > 5) {
+            alert('please wait for some time before sending request again');
+            return;
+        }
+
+        setTimeout(() => {
+            window.localStorage.setItem('numberOfCalls', 0);
+            setNumberOfCalls(0);
+        }, 65000);
 
         // fetch data
         const response = await axios.get(`${base_url}/api/stocks/${number}`);
@@ -39,6 +64,9 @@ function App() {
 
     return (
         <div className="container">
+            {/* {stocks.length === 0 ? (
+            ) : (
+            )} */}
             <form onSubmit={getStocks}>
                 <legend>Enter number of stocks:</legend>
                 <div className="mb-3">
@@ -47,16 +75,20 @@ function App() {
                         value={number}
                         name="Number"
                         className="form-control"
-                        onChange={({ target }) => setNumber(target.value)}
+                        onChange={({ target }) => {
+                            setNumber(target.value);
+                        }}
                     />
                 </div>
                 <button type="submit" className="btn btn-primary">
                     Show
                 </button>
             </form>
-
-            <br />
-            <button className="btn btn-dark" onClick={handleRestart}>
+            <button
+                className="btn btn-dark"
+                onClick={handleRestart}
+                style={{ marginTop: 1 + 'rem' }}
+            >
                 Restart
             </button>
 

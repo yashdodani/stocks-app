@@ -58,4 +58,5 @@ setInterval(updateStockData, 1000);
 const PORT = 8001;
 server.listen(PORT, () => {
     console.log(`App running on port ${PORT}`);
+    fs.writeFileSync(`${__dirname}/data/stocks.json`, '');
 });
