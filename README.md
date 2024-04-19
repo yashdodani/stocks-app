@@ -1,14 +1,11 @@
-
 # Stocks App
 
 Web-app to view stock prices in real-time.
 
-
 ## NOTE
 
-- The requirements of the project were of 20 stocks, but polygon limits requests to 5 per minute
-- So, at max, 5 stocks can be monitored at once.
-
+-   The requirements of the project were of 20 stocks, but polygon limits requests to 5 per minute
+-   So, at max, 5 stocks can be monitored at once.
 
 ## Run Locally
 
@@ -29,15 +26,14 @@ Install dependencies
 ```bash
   npm install
 ```
-- Before starting server, make sure to add environment variables to .env file.
-Start the server
+
+-   Before starting server, make sure to add environment variables to .env file.
+    Start the server
 
 ```bash
   npm run start:client
   npm run start:server
 ```
-
-
 
 ## Environment Variables
 
@@ -51,8 +47,7 @@ Client is hosted at (if port 5713 is not used)
 
 ```http
 http://localhost:5173
-````
-
+```
 
 ## API Reference
 
@@ -62,10 +57,6 @@ http://localhost:5173
   GET /api/stocks/:n
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `n` | `number` | **Required**. Number of stocks |
-
-
-Takes two numbers and returns the sum.
-
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `n`       | `number` | **Required**. Number of stocks |
